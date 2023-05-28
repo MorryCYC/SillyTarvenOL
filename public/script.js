@@ -81,6 +81,7 @@ import {
 import {
     setOpenAIMessageExamples,
     setOpenAIMessages,
+    setupOpenAIPromptManager,
     prepareOpenAIMessages,
     sendOpenAIRequest,
     loadOpenAISettings,
@@ -4934,6 +4935,7 @@ async function getSettings(type) {
 
         // OpenAI
         loadOpenAISettings(data, settings);
+                setupOpenAIPromptManager(settings);
 
         // Horde
         loadHordeSettings(settings);
