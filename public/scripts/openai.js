@@ -586,7 +586,7 @@ function prepareOpenAIMessages({
                                          quietPrompt,
                                          extensionPrompts,
                                          cyclePrompt
-                                     } = {}) {
+                                     } = {}, dryRun) {
     const prompts = promptManager.getPromptCollection();
     const chatCompletion = new ChatCompletion();
     const userSettings = promptManager.serviceSettings;
@@ -667,7 +667,7 @@ function prepareOpenAIMessages({
         promptManager.populateTokenHandler(chatCompletion.getMessages());
 
         // All information are up-to-date, render without dry-run.
-        promptManager.render(false);
+        if (false === dryRun) promptManager.render(false);
     }
 
     const chat = chatCompletion.getChat();
