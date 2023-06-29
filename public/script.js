@@ -4893,6 +4893,9 @@ async function getSettings(type) {
             $("#your_name").val(name1);
         }
 
+        // Allow subscribers to mutate settings before applying any modifiers
+        eventSource.emit(event_types.SETTINGS_LOADED_BEFORE, settings);
+
         //Load KoboldAI settings
         koboldai_setting_names = data.koboldai_setting_names;
         koboldai_settings = data.koboldai_settings;
