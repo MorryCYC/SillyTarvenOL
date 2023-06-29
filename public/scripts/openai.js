@@ -1699,6 +1699,9 @@ async function saveOpenAIPreset(name, settings) {
         nsfw_avoidance_prompt: settings.nsfw_avoidance_prompt,
         wi_format: settings.wi_format,
         stream_openai: settings.stream_openai,
+        prompts: settings.prompts,
+        prompt_lists: settings.prompt_lists,
+        prompt_manager_settings: settings.prompt_manager_settings
         api_url_scale: settings.api_url_scale,
         show_external_models: settings.show_external_models,
     };
@@ -2025,6 +2028,10 @@ function onSettingsPresetChange() {
         nsfw_avoidance_prompt: ['#nsfw_avoidance_prompt_textarea', 'nsfw_avoidance_prompt', false],
         wi_format: ['#wi_format_textarea', 'wi_format', false],
         stream_openai: ['#stream_toggle', 'stream_openai', true],
+        prompts: ['', 'prompts', false],
+        prompt_lists: ['', 'prompt_lists', false],
+        prompt_manager_settings: ['', 'prompt_manager_settings', false],
+        use_openrouter: ['#use_openrouter', 'use_openrouter', true],
         api_url_scale: ['#api_url_scale', 'api_url_scale', false],
         show_external_models: ['#openai_show_external_models', 'show_external_models', true],
     };
@@ -2042,6 +2049,9 @@ function onSettingsPresetChange() {
 
     $(`#chat_completion_source`).trigger('change');
     $(`#openai_logit_bias_preset`).trigger('change');
+
+    eventSource.emit(event_types.OAI_PRESET_CHANGED, oai_settings);
+
     saveSettingsDebounced();
 }
 
