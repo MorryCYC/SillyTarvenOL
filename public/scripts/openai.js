@@ -668,7 +668,10 @@ function prepareOpenAIMessages({
             chatCompletion.log(error);
         }
     } finally {
-        promptManager.populateTokenHandler(chatCompletion.getMessages());
+        const messages = chatCompletion.getMessages();
+        promptManager.populateTokenHandler(messages);
+        promptManager.setMessages(messages);
+        console.log(messages)
 
         // All information are up-to-date, render without dry-run.
         if (false === dryRun) promptManager.render(false);
@@ -1253,12 +1256,28 @@ class MessageCollection  {
         this.identifier = identifier;
     }
 
+    getChat() {
+        return this.collection.reduce((acc, message) => {
+            const name = message.name;
+            if (message.content) acc.push({role: message.role, ...(name && { name }), content: message.content});
+            return acc;
+        }, []);
+    }
+
     getCollection() {
         return this.collection;
     }
 
     addItem(item) {
         this.collection.push(item);
+    }
+
+    getItemByIdentifier(identifier) {
+        return this.collection.find(item => item.identifier === identifier);
+    }
+
+    hasItemWithIdentifier(identifier) {
+        return this.collection.some(message => message.identifier === identifier);
     }
 
     getTokens() {
@@ -1337,7 +1356,7 @@ class ChatCompletion {
     }
 
     has(identifier) {
-        return this.messages.collection.some(message => message.identifier === identifier);
+        return this.messages.hasItemWithIdentifier(identifier);
     }
 
     getTotalTokenCount() {
@@ -1348,12 +1367,9 @@ class ChatCompletion {
         const chat = [];
         for (let item of this.messages.collection) {
             if (item instanceof MessageCollection) {
-                const messages = item.collection.reduce((acc, message) => {
-                    const name = message.name;
-                    if (message.content) acc.push({role: message.role, ...(name && { name }), content: message.content});
-                    return acc;
-                }, []);
-                chat.push(...messages);
+                chat.push(...item.getChat());
+            } else {
+                chat.push(item);
             }
         }
         return chat;
