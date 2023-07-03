@@ -293,7 +293,7 @@ function setupOpenAIPromptManager(openAiSettings) {
     };
 
     promptManager.saveServiceSettings = () => {
-        saveSettingsDebounced();
+        return saveSettings();
     }
 
     promptManager.tryGenerate = () => {
