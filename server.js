@@ -1,5 +1,29 @@
 #!/usr/bin/env node
 
+createDefaultFiles();
+
+function createDefaultFiles() {
+    const fs = require('fs');
+    const path = require('path');
+    const files = {
+        settings: 'public/settings.json',
+        bg_load: 'public/css/bg_load.css',
+        config: 'config.conf',
+    };
+
+    for (const file of Object.values(files)) {
+        try {
+            if (!fs.existsSync(file)) {
+                const defaultFilePath = path.join('default', path.parse(file).base);
+                fs.copyFileSync(defaultFilePath, file);
+                console.log(`Created default file: ${file}`);
+            }
+        } catch (error) {
+            console.error(`FATAL: Could not write default file: ${file}`, error);
+        }
+    }
+}
+
 const process = require('process')
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
@@ -3413,11 +3437,19 @@ const autorunUrl = new URL(
     (':' + server_port)
 );
 
+async function checkDeprecatedBranch(branch) {
+    if (branch === 'main' || branch === 'dev') {
+        console.log('\x1b[1m\x1b[31m%s\x1b[0m', `${branch} is a deprecated branch. It will not receive updates and will be deleted from the repository soon.\nPlease switch to the new "release" or "staging" branch. Learn how here: https://docs.sillytavern.app/usage/branches/`);
+        await delay(5000); // wait 5 seconds so the user can read the message
+    }
+}
+
 const setupTasks = async function () {
     const version = getVersion();
 
     console.log(`SillyTavern ${version.pkgVersion}` + (version.gitBranch ? ` '${version.gitBranch}' (${version.gitRevision})` : ''));
 
+    await checkDeprecatedBranch(version.gitBranch);
     backupSettings();
     migrateSecrets();
     ensurePublicDirectoriesExist();
