@@ -81,7 +81,7 @@ import {
 import {
     setOpenAIMessageExamples,
     setOpenAIMessages,
-    setupOpenAIPromptManager,
+    setupChatCompletionPromptManager,
     prepareOpenAIMessages,
     sendOpenAIRequest,
     loadOpenAISettings,
@@ -92,8 +92,6 @@ import {
     openai_messages_count,
     getTokenCountOpenAI,
     chat_completion_sources,
-    setupWindowAiPromptManager,
-    setupClaudePromptManager,
     getTokenizerModel,
     getChatCompletionModel,
 } from "./scripts/openai.js";
@@ -4397,20 +4395,13 @@ function changeMainAPI() {
     }
 
     switch (oai_settings.chat_completion_source) {
-        case chat_completion_sources.OPENAI:
-            setupOpenAIPromptManager(oai_settings);
-            break;
-        case chat_completion_sources.CLAUDE:
-            setupClaudePromptManager(oai_settings);
-            break;
-        case chat_completion_sources.WINDOWAI:
-            setupWindowAiPromptManager(oai_settings);
-            break;
-        case chat_completion_sources.OPENROUTER:
-            setupWindowAiPromptManager(oai_settings);
-            break;
         case chat_completion_sources.SCALE:
-            setupWindowAiPromptManager(oai_settings);
+        case chat_completion_sources.OPENROUTER:
+        case chat_completion_sources.WINDOWAI:
+        case chat_completion_sources.CLAUDE:
+        case chat_completion_sources.OPENAI:
+        default:
+            setupChatCompletionPromptManager(oai_settings);
             break;
     }
 }
